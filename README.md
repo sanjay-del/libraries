@@ -26,16 +26,11 @@ Step 2: Go to the project directory and install dependencies
   npm install
 ```
 
-Step 3: Add following details to .env file inside project root directory.
+Step 3: Add following details to .env file inside project root and update variables
 
 ```bash
-DATABASE_URL=postgres://UN:PW@HOST:PORT/DB
+DATABASE_URL=postgres://USERNAME:PASSWORD@HOST:DB_PORT/DB_NAME
 JWT_SECRET=hello12345xyz
-OTP_SECRET=abcdxyz1234998
-MAIL_HOST=smtp.gmail.com
-EMAIL_PORT=465
-EMAIL_USER=YOUR_EMAIL_ADDRESS
-EMAIL_PASS=YOU_APP_PASSCODE
 JWT_EXPIRY_TIME=60m
 PORT=3333
 ```
