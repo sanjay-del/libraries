@@ -7,6 +7,9 @@ A Monorepo for Prisma and Rumsan User Libraries
 - Postgres Database
 - Node.js v20.\* (Recommended)
 - NestJS/CLI Installed
+  ```bash
+  npm install -g @nestjs/cli
+  ```
 
 ## Run Locally
 
