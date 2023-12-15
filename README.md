@@ -1,37 +1,30 @@
-# Rumsan Nx
+# Rumsan Workspace
 
-A Monorepo for NestJS and Prisma based projects implementing a user management library.
+A Monorepo for Prisma and Rumsan User libraries
 
 ## Prerequisite
 
 - Postgres Database
 - Node.js v20.\* (Recommended)
-- Nest/CLI Installed
 - User, Role, Permission Schema Model inside `prisma/schema.prisma` file
-- All these models seeded with data
-
-## Prisma Setup
-
-- Initialize prisma schema and .env file with the command `npx prisma init`
-- Update `prisma/schema.prisma` file with User, Role and Permission Models
-- Run migration with `npx prisma migrate dev`
-- Run seed script with `npx prisma db seed`
+- NestJS/CLI Installed
 
 ## Run Locally
 
-Clone the project
+Setp 1: Clone the project
 
 ```bash
-  git clone https://github.com/thebinod7/nx-fullstack.git
+  git clone git@github.com:rumsan/libraries.git
 ```
 
-Go to the project directory
+Step 2: Go to the project directory and install dependencies
 
 ```bash
   cd my-project
+  npm install
 ```
 
-Setup environment variables. Add following details to .env file inside project root directory.
+Step 3: Add following details to .env file inside project root directory.
 
 ```bash
 DATABASE_URL=postgres://UN:PW@HOST:PORT/DB
@@ -42,40 +35,54 @@ EMAIL_PORT=465
 EMAIL_USER=YOUR_EMAIL_ADDRESS
 EMAIL_PASS=YOU_APP_PASSCODE
 JWT_EXPIRY_TIME=60m
+PORT=3333
 ```
 
-Install dependencies
+Step 4: Migrate and seed prisma db
 
 ```bash
-  yarn install
+  npx prisma migrate dev
 ```
 
-Start the server
+Seed database with
 
 ```bash
-  yarn start:dev
+  npx prisma db seed
 ```
+
+Step 5: Run project
+
+```bash
+  npm run dev
+```
+
+Step 6: Visit API docs at: http://localhost:3333/api/docs
 
 ## Usage/Examples
 
-Go to `apps/nest-api/app.module.ts` and see the implementation
+Go to `apps/nest-api/src/app/app.module.ts` and see the implementation of PrismaDbModule and RsUserModule.
 
 ```javascript
+import { Module } from '@nestjs/common';
 import { RsUserModule } from '@rumsan/user';
 import { PrismaDbModule, PrismaService } from '@rumsan/prisma';
 
-const STATIC_FILES_PATH = join(__dirname, 'assets');
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ListenerModule } from './listeners/listners.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
 	imports: [
-		ServeStaticModule.forRoot({
-			rootPath: STATIC_FILES_PATH,
-		}),
+		ConfigModule.forRoot({ isGlobal: true }),
+		EventEmitterModule.forRoot({ maxListeners: 10, ignoreErrors: false }),
+		ListenerModule,
 		PrismaDbModule,
 		RsUserModule,
 	],
 	controllers: [AppController],
-	providers: [AppService, PrismaService],
+	providers: [AppService],
 })
 export class AppModule {}
 ```

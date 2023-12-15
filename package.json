@@ -6,7 +6,7 @@
 		"seed": "ts-node prisma/seed.ts"
 	},
 	"scripts": {
-		"start:dev": "npx nx serve nest-api",
+		"dev": "npx nx serve nest-api",
 		"db:migrate": "npx prisma migrate dev"
 	},
 	"private": true,
