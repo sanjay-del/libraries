@@ -64,7 +64,7 @@ export class RolesController {
 	@HttpCode(HttpStatus.OK)
 	@CheckAbilities({ action: ACTIONS.CREATE, subject: SUBJECTS.PERMISSION })
 	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Post('perm')
+	@Post('perms')
 	createPermission(@Body() dto: CreatePermissionDto) {
 		return this.roleService.createPermission(dto);
 	}
