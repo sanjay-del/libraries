@@ -1,12 +1,11 @@
 # Rumsan Workspace
 
-A Monorepo for Prisma and Rumsan User libraries
+A Monorepo for Prisma and Rumsan User Libraries
 
 ## Prerequisite
 
 - Postgres Database
 - Node.js v20.\* (Recommended)
-- User, Role, Permission Schema Model inside `prisma/schema.prisma` file
 - NestJS/CLI Installed
 
 ## Run Locally
