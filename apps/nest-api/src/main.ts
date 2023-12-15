@@ -21,6 +21,7 @@ async function bootstrap() {
 		.setTitle('Community Service')
 		.setDescription('Rahat Community Management Service')
 		.setVersion('0.1')
+		.addBearerAuth()
 		.build();
 
 	const document = SwaggerModule.createDocument(app, config);

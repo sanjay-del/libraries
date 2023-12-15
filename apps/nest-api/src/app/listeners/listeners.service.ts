@@ -6,6 +6,6 @@ import { EVENTS } from '../../constants';
 export class ListenerService {
 	@OnEvent(EVENTS.SEND_OTP_EMAIL)
 	sendOTPEmail(data: any) {
-		return { message: 'Use you messenger service!', data };
+		console.log('Use your messenger service!', data);
 	}
 }

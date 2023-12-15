@@ -1,4 +1,4 @@
-# Nx Workspace
+# Rumsan Nx
 
 A Monorepo for NestJS and Prisma based projects implementing a user management library.
 

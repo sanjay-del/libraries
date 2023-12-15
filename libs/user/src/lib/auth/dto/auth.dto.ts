@@ -1,46 +1,71 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class SignupDto {
-  @IsString()
-  @IsNotEmpty()
-  authAddress: string;
+	@ApiProperty({
+		example: 'binod@mailinator.com',
+	})
+	@IsString()
+	@IsNotEmpty()
+	authAddress: string;
 
-  @IsString()
-  authType: string;
+	@ApiProperty({
+		example: 'Email/Phone/Wallet',
+	})
+	@IsString()
+	authType: string;
 
-  @IsOptional()
-  @IsNumber()
-  roleId: number;
+	@ApiProperty({
+		example: 3,
+	})
+	@IsOptional()
+	@IsNumber()
+	roleId: number;
 
-  @IsNotEmpty()
-  firstName: string;
+	@ApiProperty({
+		example: 'Binod',
+	})
+	@IsNotEmpty()
+	firstName: string;
 
-  @IsNotEmpty()
-  lastName: string;
+	@ApiProperty({
+		example: 'Chaudhary',
+	})
+	@IsNotEmpty()
+	lastName: string;
 }
 
 export class OtpDto {
-  @IsString()
-  @IsNotEmpty()
-  authAddress: string;
+	@ApiProperty({
+		example: 'binod@mailinator.com',
+	})
+	@IsString()
+	@IsNotEmpty()
+	authAddress: string;
 }
 
 export class LoginDto {
-  @IsString()
-  @IsNotEmpty()
-  authAddress: string;
+	@ApiProperty({
+		example: 'binod@mailinator.com',
+	})
+	@IsString()
+	@IsNotEmpty()
+	authAddress: string;
 
-  @IsString()
-  @IsNotEmpty()
-  otp: string;
+	@ApiProperty({
+		example: '123456',
+	})
+	@IsString()
+	@IsNotEmpty()
+	otp: string;
 }
 
 export class WalletLoginDto {
-  @IsString()
-  @IsNotEmpty()
-  signature: string;
+	@IsString()
+	@IsNotEmpty()
+	signature: string;
 
-  @IsString()
-  @IsNotEmpty()
-  message: string;
+	@IsString()
+	@IsNotEmpty()
+	message: string;
 }

@@ -2,6 +2,7 @@
 
 - Move code to repo ✅
 - Add Swagger ✅
-- Re-align User Module
-- Remove email dependency
+- Remove email dependency ✅
+- Re-align User Module ✅
+- Create RS_User DTOs ✅
 - Create ReadMe doc
