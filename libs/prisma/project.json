@@ -4,11 +4,26 @@
 	"sourceRoot": "libs/prisma/src",
 	"projectType": "library",
 	"targets": {
+		"build": {
+			"executor": "@nx/js:tsc",
+			"outputs": ["{options.outputPath}"],
+			"options": {
+				"outputPath": "dist/libs/prisma",
+				"tsConfig": "libs/prisma/tsconfig.lib.json",
+				"packageJson": "libs/prisma/package.json",
+				"main": "libs/prisma/src/index.ts",
+				"assets": ["libs/prisma/*.md"]
+			}
+		},
+		"publish": {
+			"command": "node tools/scripts/publish.mjs prisma {args.ver} {args.tag}",
+			"dependsOn": ["build"]
+		},
 		"lint": {
 			"executor": "@nx/eslint:lint",
 			"outputs": ["{options.outputFile}"],
 			"options": {
-				"lintFilePatterns": ["libs/prisma/**/*.ts"]
+				"lintFilePatterns": ["libs/prisma/**/*.ts", "libs/prisma/package.json"]
 			}
 		},
 		"test": {

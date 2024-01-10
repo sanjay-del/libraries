@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Service } from '@prisma/client';
 import { cloneDeep } from 'lodash';
 export const roles: Array<{ id?: number; name: string; isSystem?: boolean }> = [
   {
@@ -31,86 +31,85 @@ export const permissions: Array<{
   {
     id: 2,
     roleId: 2,
-    action: 'create',
-    subject: 'user',
-  },
-  {
-    id: 3,
-    roleId: 2,
-    action: 'read',
+    action: 'manage',
     subject: 'user',
   },
   {
     id: 4,
-    roleId: 2,
-    action: 'update',
-    subject: 'user',
-  },
-  {
-    id: 5,
-    roleId: 2,
-    action: 'create',
-    subject: 'role',
-  },
-  {
-    id: 6,
-    roleId: 2,
-    action: 'read',
-    subject: 'role',
-  },
-  {
-    id: 7,
-    roleId: 2,
-    action: 'update',
-    subject: 'role',
-  },
-  {
-    id: 8,
-    roleId: 2,
-    action: 'manage',
-    subject: 'permission',
-  },
-  {
-    id: 9,
     roleId: 3,
     action: 'read',
-    subject: 'user',
-  },
-  {
-    id: 10,
-    roleId: 3,
-    action: 'update',
     subject: 'user',
   },
 ];
 
 export const users: Array<{
   id?: number;
-  firstName: string;
-  lastName: string;
-  roleId: number;
-  authAddress: string;
+  name?: string;
+  email?: string;
+  wallet?: string;
 }> = [
   {
     id: 1,
-    firstName: 'Mr',
-    lastName: 'Admin',
-    roleId: 1,
-    authAddress: 'admin@mailinator.com',
+    name: 'Rumsan Admin',
+    email: 'rumsan@mailinator.com',
   },
   {
     id: 2,
-    firstName: 'Mr',
-    lastName: 'Manager',
-    roleId: 2,
-    authAddress: 'manager@mailinator.com',
+    name: 'Ms Manager',
+    wallet: '0xAC6bFaf10e89202c293dD795eCe180BBf1430d7B',
   },
   {
     id: 3,
-    firstName: 'Mr',
-    lastName: 'User',
+    name: 'Mr User',
+    email: 'user@mailinator.com',
+  },
+];
+
+export const userRoles: Array<{
+  id?: number;
+  userId: number;
+  roleId: number;
+}> = [
+  {
+    id: 1,
+    userId: 1,
+    roleId: 1,
+  },
+  {
+    id: 2,
+    userId: 2,
+    roleId: 2,
+  },
+  {
+    id: 3,
+    userId: 3,
     roleId: 3,
-    authAddress: 'user@mailinator.com',
+  },
+];
+
+export const auths: Array<{
+  id?: number;
+  userId: number;
+  service: Service;
+  serviceId: string;
+}> = [
+  {
+    id: 1,
+    userId: 1,
+    service: Service.EMAIL,
+    serviceId: 'rumsan@mailinator.com',
+  },
+  {
+    id: 2,
+    userId: 2,
+    service: Service.WALLET,
+    serviceId: '0xAC6bFaf10e89202c293dD795eCe180BBf1430d7B',
+  },
+  {
+    id: 3,
+    userId: 3,
+    service: Service.EMAIL,
+    serviceId: 'user@mailinator.com',
   },
 ];
 
@@ -158,6 +157,32 @@ async function main() {
       },
       create: userAttrs,
       update: userAttrs,
+    });
+  }
+
+  // ==============Create Auths===============
+  for await (const auth of auths) {
+    const authAttrs = cloneDeep(auth);
+    delete authAttrs.id;
+    await prisma.auth.upsert({
+      where: {
+        id: auth.id,
+      },
+      create: authAttrs,
+      update: authAttrs,
+    });
+  }
+
+  // ==============Create User Roles===============
+  for await (const userRole of userRoles) {
+    const userRoleAttrs = cloneDeep(userRole);
+    delete userRoleAttrs.id;
+    await prisma.userRole.upsert({
+      where: {
+        id: userRole.id,
+      },
+      create: userRoleAttrs,
+      update: userRoleAttrs,
     });
   }
 }

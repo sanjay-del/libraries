@@ -1,78 +1,89 @@
 import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	HttpCode,
-	HttpStatus,
-	Param,
-	Patch,
-	Post,
-	UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
-import { GetUser } from '../auth/decorator';
-import { JwtGuard } from '../auth/guard';
-import { EditUserDto } from './dto';
-import { UserService } from './user.service';
-import { AbilitiesGuard } from '../ability/ability.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UUID } from 'crypto';
 import { CheckAbilities } from '../ability/ability.decorator';
-import { ACTIONS, SUBJECTS } from '../constants';
-import { SignupDto } from '../auth/dto';
-import { ApiTags } from '@nestjs/swagger';
+import { AbilitiesGuard, SkipAbilitiesGuard } from '../ability/ability.guard';
+import { CU, CurrentUser } from '../auth/decorator';
+import { JwtGuard } from '../auth/guard';
+import { CUI } from '../auth/interfaces/current-user.interface';
+import { ACTIONS, APP, SUBJECTS } from '../constants';
+import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserService } from './user.service';
 
-// @UseGuards(JwtGuard)
 @Controller('users')
 @ApiTags('Users')
+@ApiBearerAuth(APP.JWT_BEARER)
+@UseGuards(JwtGuard, AbilitiesGuard)
 export class UserController {
-	constructor(private userService: UserService) {}
+  constructor(private userService: UserService) {}
 
-	@HttpCode(HttpStatus.OK)
-	@CheckAbilities({ action: ACTIONS.CREATE, subject: SUBJECTS.ROLE })
-	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Post()
-	createRole(@Body() dto: SignupDto) {
-		return this.userService.createUser(dto);
-	}
+  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
+  @Get('')
+  list() {
+    return this.userService.list();
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
-	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Get('me')
-	getMe(@GetUser() user: User) {
-		if (user.otp) delete user.otp;
-		return user;
-	}
+  @Post('')
+  @CheckAbilities({ action: ACTIONS.CREATE, subject: SUBJECTS.USER })
+  create(@Body() dto: CreateUserDto) {
+    return this.userService.create(dto);
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.USER })
-	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Patch('profile')
-	updateProfile(@GetUser('id') userId: number, @Body() dto: EditUserDto) {
-		return this.userService.updateProfile(+userId, dto);
-	}
+  @Get('me')
+  @SkipAbilitiesGuard()
+  async getMe(@CurrentUser() cu: CUI) {
+    const user = await this.userService.getById(cu.id);
+    return { ...user, permissions: cu.permissions, roles: cu.roles };
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
-	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Get('')
-	listAll() {
-		return this.userService.listUsers();
-	}
+  @Patch('me')
+  @SkipAbilitiesGuard()
+  updateMe(@CU() cu: CUI, @Body() dto: UpdateUserDto) {
+    return this.userService.updateById(cu.userId, dto);
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.USER })
-	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Patch(':userId')
-	editUser(@Param('userId') userId: number, @Body() dto: EditUserDto) {
-		return this.userService.updateProfile(+userId, dto);
-	}
+  @Get(':uuid')
+  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
+  get(@Param('uuid') uuid: UUID) {
+    return this.userService.get(uuid);
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@CheckAbilities({ action: ACTIONS.DELETE, subject: SUBJECTS.USER })
-	@UseGuards(JwtGuard, AbilitiesGuard)
-	@Delete(':userId')
-	deleteUser(@Param('userId') userId: number) {
-		return this.userService.deleteUser(+userId);
-	}
+  @Patch(':uuid')
+  @CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.USER })
+  update(@Param('uuid') uuid: UUID, @Body() dto: UpdateUserDto) {
+    return this.userService.update(uuid, dto);
+  }
+
+  @Delete(':uuid')
+  @CheckAbilities({ action: ACTIONS.DELETE, subject: SUBJECTS.USER })
+  delete(@Param('uuid') uuid: UUID) {
+    return this.userService.delete(uuid);
+  }
+
+  @Get(':uuid/roles')
+  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
+  getRoles(@Param('uuid') uuid: UUID) {
+    return this.userService.get(uuid);
+  }
+
+  @Post(':uuid/roles')
+  @CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.USER })
+  addRoles(@Param('uuid') uuid: UUID, @Body() dto: UpdateUserDto) {
+    return this.userService.update(uuid, dto);
+  }
+
+  @Delete(':uuid/roles')
+  @CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.USER })
+  removeRoles(@Param('uuid') uuid: UUID, @Body() dto: UpdateUserDto) {
+    return this.userService.update(uuid, dto);
+  }
 }

@@ -1,78 +1,147 @@
-import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { Prisma, PrismaClient, Service, User } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 import { PrismaService } from '@rumsan/prisma';
-import { EditUserDto } from './dto';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-
-const USER_ROLE_ID = 3;
+import { AuthService } from '../auth/auth.service';
+import { CreateUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
 export class UserService {
-	constructor(private prisma: PrismaService) {}
+  private rsprisma;
+  constructor(
+    protected prisma: PrismaService,
+    public authService: AuthService,
+  ) {
+    this.rsprisma = this.prisma.rsclient;
+  }
 
-	async createUser(dto: any) {
-		try {
-			if (!dto.roleId) dto.roleId = USER_ROLE_ID;
-			const user = await this.prisma.user.create({
-				data: dto,
-			});
-			return user;
-		} catch (err) {
-			if (err instanceof PrismaClientKnownRequestError) {
-				if (err.code === 'P2002') {
-					throw new ForbiddenException('Your ID is taken!');
-				}
-				throw err;
-			}
-		}
-	}
+  async create(
+    dto: CreateUserDto,
+    { callback } = {
+      callback: (
+        err: Error | null,
+        tx: Omit<
+          PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
+          | '$on'
+          | '$connect'
+          | '$disconnect'
+          | '$use'
+          | '$transaction'
+          | '$extends'
+        >,
+        user: User | null,
+      ) => {},
+    },
+  ) {
+    return this.prisma.$transaction(async (tx) => {
+      try {
+        const user = await tx.user.create({
+          data: {
+            ...dto,
+          },
+        });
 
-	async updateProfile(userId: number, dto: EditUserDto) {
-		try {
-			const user = await this.prisma.user.update({
-				where: {
-					id: userId,
-				},
-				data: { ...dto },
-			});
-			return user;
-		} catch (err) {
-			throw err;
-		}
-	}
+        if (user.email)
+          await tx.auth.create({
+            data: {
+              userId: user.id,
+              service: Service.EMAIL,
+              serviceId: user.email,
+            },
+          });
 
-	async updateOtpByAddress(authAddress: string, otp: string) {
-		try {
-			const user = await this.prisma.user.update({
-				where: {
-					authAddress,
-				},
-				data: { otp },
-			});
-			return user;
-		} catch (err) {
-			throw err;
-		}
-	}
+        if (user.phone)
+          await tx.auth.create({
+            data: {
+              userId: user.id,
+              service: Service.PHONE,
+              serviceId: user.phone,
+            },
+          });
 
-	async listUsers() {
-		return this.prisma.user.findMany();
-	}
+        if (user.wallet)
+          await tx.auth.create({
+            data: {
+              userId: user.id,
+              service: Service.WALLET,
+              serviceId: user.wallet,
+            },
+          });
 
-	getUserById(userId: number) {
-		return this.prisma.user.findUnique({ where: { id: userId } });
-	}
+        if (callback) await callback(null, tx, user);
+        return user;
+      } catch (err: any) {
+        if (callback) await callback(err, tx, null);
+        throw err;
+      }
+    });
+  }
 
-	getUserByAuthAddress(authAddress: string) {
-		return this.prisma.user.findUnique({ where: { authAddress } });
-	}
+  async updateById(userId: number, dto: UpdateUserDto) {
+    const user = await this.prisma.user.update({
+      where: {
+        id: userId,
+        deletedAt: null,
+      },
+      data: { ...dto },
+    });
+    return user;
+  }
 
-	async deleteUser(userId: number) {
-		try {
-			const user = await this.getUserById(userId);
-			if (!user) throw new HttpException('User does not exist!', 500);
-			return this.prisma.user.delete({ where: { id: +userId } });
-		} catch (err) {
-			throw err;
-		}
-	}
+  async update(uuid: string, dto: UpdateUserDto) {
+    const user = await this.prisma.user.update({
+      where: {
+        uuid,
+        deletedAt: null,
+      },
+      data: { ...dto },
+    });
+    return user;
+  }
+
+  // async list(
+  //   dto: SignupListDto,
+  // ): Promise<PaginatorTypes.PaginatedResult<Signup>> {
+  //   const orderBy: Record<string, 'asc' | 'desc'> = {};
+  //   orderBy[dto.sort] = dto.order;
+  //   console.log(this.config.autoApprove);
+  //   return paginate(
+  //     this.prisma.signup,
+  //     {
+  //       where: {
+  //         status: dto.status,
+  //       },
+  //       orderBy,
+  //     },
+  //     {
+  //       page: dto.page,
+  //       perPage: dto.perPage,
+  //     },
+  //   );
+  // }
+
+  async list() {
+    return this.prisma.user.findMany({
+      where: { deletedAt: null },
+    });
+  }
+
+  getById(userId: number) {
+    return this.prisma.user.findUnique({
+      where: { id: userId, deletedAt: null },
+    });
+  }
+
+  get(uuid: string) {
+    return this.prisma.user.findUnique({ where: { uuid, deletedAt: null } });
+  }
+
+  async delete(uuid: string) {
+    try {
+      const user = await this.rsprisma.user.softDelete({ uuid });
+      return user;
+    } catch (err) {
+      throw new Error('rs-user: User not found or deletion not permitted.');
+    }
+  }
 }

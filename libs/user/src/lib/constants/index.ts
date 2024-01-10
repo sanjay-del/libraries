@@ -1,23 +1,30 @@
+const namespace = 'rumsan_user';
+const withNamespace = (str: string) => `${namespace}.${str}`;
+
 export const ACTIONS = {
-	MANAGE: 'manage',
-	CREATE: 'create',
-	UPDATE: 'update',
-	DELETE: 'delete',
-	READ: 'read',
+  MANAGE: 'manage',
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+  READ: 'read',
 };
 
 export const SUBJECTS = {
-	ALL: 'all',
-	USER: 'user',
-	STORY: 'story',
-	ROLE: 'role',
-	PERMISSION: 'permission',
+  ALL: 'all',
+  USER: 'user',
+  STORY: 'story',
+  ROLE: 'role',
+  PERMISSION: 'permission',
 };
 
 export const EMAIL_TEMPLATES = {
-	LOGIN: 'login',
+  LOGIN: 'login',
 };
 
 export const EVENTS = {
-	SEND_OTP_EMAIL: 'send-otp-email',
+  OTP_CREATED: withNamespace(`otp_created`),
+};
+
+export const APP = {
+  JWT_BEARER: 'JWT',
 };

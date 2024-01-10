@@ -1,71 +1,65 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
-
-export class SignupDto {
-	@ApiProperty({
-		example: 'binod@mailinator.com',
-	})
-	@IsString()
-	@IsNotEmpty()
-	authAddress: string;
-
-	@ApiProperty({
-		example: 'Email/Phone/Wallet',
-	})
-	@IsString()
-	authType: string;
-
-	@ApiProperty({
-		example: 3,
-	})
-	@IsOptional()
-	@IsNumber()
-	roleId: number;
-
-	@ApiProperty({
-		example: 'Binod',
-	})
-	@IsNotEmpty()
-	firstName: string;
-
-	@ApiProperty({
-		example: 'Chaudhary',
-	})
-	@IsNotEmpty()
-	lastName: string;
-}
+import { Service } from '@prisma/client';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class OtpDto {
-	@ApiProperty({
-		example: 'binod@mailinator.com',
-	})
-	@IsString()
-	@IsNotEmpty()
-	authAddress: string;
+  @ApiProperty({
+    example: 'rumsan@mailinator.com',
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  address: string;
+
+  @ApiProperty({
+    example: 'EMAIL',
+  })
+  service: Service | null;
+
+  @ApiProperty({
+    example: '',
+  })
+  @IsUUID()
+  @IsOptional()
+  clientId: string;
 }
 
-export class LoginDto {
-	@ApiProperty({
-		example: 'binod@mailinator.com',
-	})
-	@IsString()
-	@IsNotEmpty()
-	authAddress: string;
+export class OtpLoginDto {
+  @ApiProperty({
+    example: '',
+  })
+  @IsString()
+  @IsNotEmpty()
+  challenge: string;
 
-	@ApiProperty({
-		example: '123456',
-	})
-	@IsString()
-	@IsNotEmpty()
-	otp: string;
+  @ApiProperty({
+    example: '',
+  })
+  @IsString()
+  @IsNotEmpty()
+  otp: string;
+
+  @ApiProperty({
+    example: 'EMAIL',
+  })
+  service: Service | null;
+}
+
+export class ChallengeDto {
+  @ApiProperty({
+    example: '',
+  })
+  @IsUUID()
+  @IsOptional()
+  clientId: string;
 }
 
 export class WalletLoginDto {
-	@IsString()
-	@IsNotEmpty()
-	signature: string;
+  @IsString()
+  @IsNotEmpty()
+  signature: string;
 
-	@IsString()
-	@IsNotEmpty()
-	message: string;
+  @IsString()
+  @IsNotEmpty()
+  challenge: string;
 }

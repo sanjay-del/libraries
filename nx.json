@@ -15,9 +15,6 @@
         "{workspaceRoot}/eslint.config.js"
       ]
     },
-    "e2e": {
-      "cache": true
-    },
     "@nx/jest:jest": {
       "cache": true,
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"],
@@ -45,6 +42,5 @@
       "!{projectRoot}/eslint.config.js"
     ],
     "sharedGlobals": []
-  },
-  "nxCloudAccessToken": "MDMzMGRlNjAtYWEzOS00YTdmLTk2ZmItMjU2ZDFhY2I5N2JkfHJlYWQtd3JpdGU="
+  }
 }

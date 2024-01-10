@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { PrismaModule } from '@rumsan/prisma';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { PrismaDbModule } from '@rumsan/prisma';
-import { JwtModule } from '@nestjs/jwt';
-import { UserModule } from '../user/user.module';
 import { JwtStrategy } from './strategy';
 
 @Module({
-	imports: [JwtModule.register({}), UserModule, PrismaDbModule],
-	controllers: [AuthController],
-	providers: [AuthService, JwtStrategy],
+  imports: [JwtModule.register({}), PrismaModule, PassportModule],
+  controllers: [AuthController],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,34 +1,50 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { SignupDto, LoginDto, OtpDto, WalletLoginDto } from './dto';
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+import { AuthService } from './auth.service';
+import { ChallengeDto, OtpDto, OtpLoginDto, WalletLoginDto } from './dto';
 
 @Controller('auth')
 @ApiTags('Auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) {}
 
-	@HttpCode(HttpStatus.OK)
-	@Post('signup')
-	singup(@Body() dto: SignupDto) {
-		return this.authService.singup(dto);
-	}
+  _getRequestInfo(request: Request) {
+    return {
+      ip: request.ip,
+      userAgent: request.get('user-agent'),
+    };
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@Post('login')
-	login(@Body() dto: LoginDto) {
-		return this.authService.login(dto);
-	}
+  @HttpCode(HttpStatus.OK)
+  @Post('login')
+  loginOtp(@Req() request: Request, @Body() dto: OtpLoginDto) {
+    return this.authService.loginByOtp(dto, this._getRequestInfo(request));
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@Post('wallet-login')
-	walletLogin(@Body() dto: WalletLoginDto) {
-		return this.authService.walletLogin(dto);
-	}
+  @HttpCode(HttpStatus.OK)
+  @Post('otp')
+  getOtp(@Req() request: Request, @Body() dto: OtpDto) {
+    return this.authService.getOtp(dto, this._getRequestInfo(request));
+  }
 
-	@HttpCode(HttpStatus.OK)
-	@Post('otp')
-	auth(@Body() dto: OtpDto) {
-		return this.authService.saveAndSendOTP(dto);
-	}
+  @Post('wallet')
+  walletLogin(@Req() request: Request, @Body() dto: WalletLoginDto) {
+    return this.authService.loginByWallet(dto, this._getRequestInfo(request));
+  }
+
+  @Post('challenge')
+  getChallenge(@Req() request: Request, @Body() dto: ChallengeDto) {
+    return this.authService.getChallengeForWallet(
+      dto,
+      this._getRequestInfo(request),
+    );
+  }
 }
