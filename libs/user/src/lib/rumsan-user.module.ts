@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaModule, PrismaService } from '@rumsan/prisma';
 import { AbilityModule } from './ability/ability.module';
@@ -22,7 +21,6 @@ import { UserService } from './user/user.service';
     JwtService,
     RolesService,
     ConfigService,
-    EventEmitter2,
   ],
   imports: [
     //SignupModule.register({ autoApprove: false }),

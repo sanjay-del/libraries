@@ -4,6 +4,7 @@ import { PrismaModule } from '@rumsan/prisma';
 
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { RumsanUserModule } from '@rumsan/user';
 import { ListenerModule } from '../listener/listener.module';
 import { UserModule } from '../user/user.module';
 import { AppController } from './app.controller';
@@ -16,7 +17,7 @@ import { AppService } from './app.service';
     ListenerModule,
     PrismaModule,
     UserModule,
-    //RumsanUserModule,
+    RumsanUserModule,
     //SignupModule.register({ autoApprove: false }),
   ],
   controllers: [AppController],
