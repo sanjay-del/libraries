@@ -13,6 +13,7 @@ config/
 play/
 
 .env*
+.npmrc
 
 # IDEs and editors
 /.idea
