@@ -10,6 +10,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ++++++++++++++++++ START: @rumsan/user - User +++++++++++++++++++++++++++++++
+
+// ===================User Model==================
+model User {
+  id     Int     @id @default(autoincrement())
+  uuid   String  @unique @default(uuid())
+  name   String?
+  gender Gender  @default(UNKNOWN)
+  email  String?
+  phone  String?
+  wallet String?
+  extras Json?   @db.JsonB()
+
+  Auth     Auth[]
+  UserRole UserRole[]
+  Signup   Signup[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt()
+  deletedAt DateTime?
+  createdBy Int?
+  updatedBy Int?
+
+  @@map("tbl_users")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  UNKNOWN
+}
+
+// ++++++++++++++++++ END: @rumsan/user - User +++++++++++++++++++++++++++++++
+// ++++++++++++++++++ START: @rumsan/user - Role/Auth ++++++++++++++++++++++++
+
 // ===================Role Model==================
 model Role {
   id       Int       @unique @default(autoincrement())
@@ -44,30 +80,6 @@ model Permission {
   updatedAt DateTime? @updatedAt()
 
   @@map("tbl_auth_permissions")
-}
-
-// ===================User Model==================
-model User {
-  id     Int     @id @default(autoincrement())
-  uuid   String  @unique @default(uuid())
-  name   String?
-  gender Gender  @default(UNKNOWN)
-  email  String?
-  phone  String?
-  wallet String?
-  extras Json?   @db.JsonB()
-
-  Auth     Auth[]
-  UserRole UserRole[]
-  Signup   Signup[]
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime? @updatedAt()
-  deletedAt DateTime?
-  createdBy Int?
-  updatedBy Int?
-
-  @@map("tbl_users")
 }
 
 model UserRole {
@@ -124,6 +136,21 @@ model AuthSession {
   @@map("tbl_auth_sessions")
 }
 
+enum Service {
+  EMAIL
+  PHONE
+  WALLET
+  GOOGLE
+  APPLE
+  FACEBOOK
+  TWITTER
+  GITHUB
+  LINKEDIN
+}
+
+// ++++++++++++++++++ END: @rumsan/user - Role/Auth ++++++++++++++++++++++++
+// ++++++++++++++++++ START: @rumsan/user - Signup +++++++++++++++++++++++++
+
 model Signup {
   id             Int          @id @default(autoincrement())
   uuid           String       @unique @default(uuid())
@@ -149,21 +176,4 @@ enum SignupStatus {
   REJECTED
 }
 
-enum Service {
-  EMAIL
-  PHONE
-  WALLET
-  GOOGLE
-  APPLE
-  FACEBOOK
-  TWITTER
-  GITHUB
-  LINKEDIN
-}
-
-enum Gender {
-  MALE
-  FEMALE
-  OTHER
-  UNKNOWN
-}
+// ++++++++++++++++++ END: @rumsan/user - Signup +++++++++++++++++++++++++++

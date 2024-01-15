@@ -1,2 +1,2 @@
-export * from '../pagination.dto';
-export * from '../wallet.dto';
+export * from './pagination.dto';
+export * from './wallet.dto';

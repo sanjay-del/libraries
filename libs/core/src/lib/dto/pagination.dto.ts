@@ -3,12 +3,12 @@ import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class PaginationDto {
   @ApiProperty({
-    example: 0,
+    example: 1,
     description: 'page number',
     required: false,
   })
   @IsInt()
-  page: number = 20;
+  page: number = 1;
 
   @ApiProperty({
     example: 10,

@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import { Service, User } from '@prisma/client';
+import { ERRORS } from '@rumsan/core';
 import { PrismaService } from '@rumsan/prisma';
 import { ethers } from 'ethers';
 import { getSecret } from '../../utils/configUtils';
@@ -113,6 +114,7 @@ export class AuthService {
   }
 
   getChallengeForWallet(dto: ChallengeDto, requestInfo: RequestInfo) {
+    throw ERRORS.NOT_JSON;
     return createChallenge(getSecret(), {
       clientId: dto.clientId,
       ip: requestInfo.ip,

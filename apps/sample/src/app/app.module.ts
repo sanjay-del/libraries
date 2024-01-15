@@ -13,7 +13,10 @@ import { AppService } from './app.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    EventEmitterModule.forRoot({ maxListeners: 10, ignoreErrors: false }),
+    EventEmitterModule.forRoot({
+      maxListeners: 10,
+      ignoreErrors: false,
+    }),
     ListenerModule,
     PrismaModule,
     UserModule,

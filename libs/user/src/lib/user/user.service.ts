@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { PaginatorTypes, paginator } from '@nodeteam/nestjs-prisma-pagination';
 import { Prisma, PrismaClient, Service, User } from '@prisma/client';
 import { DefaultArgs } from '@prisma/client/runtime/library';
 import { PrismaService } from '@rumsan/prisma';
 import { AuthService } from '../auth/auth.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserListDto } from './dto/users-list.dto';
 
+const paginate: PaginatorTypes.PaginateFunction = paginator({ perPage: 20 });
 @Injectable()
 export class UserService {
   private rsprisma;
@@ -99,31 +102,22 @@ export class UserService {
     return user;
   }
 
-  // async list(
-  //   dto: SignupListDto,
-  // ): Promise<PaginatorTypes.PaginatedResult<Signup>> {
-  //   const orderBy: Record<string, 'asc' | 'desc'> = {};
-  //   orderBy[dto.sort] = dto.order;
-  //   console.log(this.config.autoApprove);
-  //   return paginate(
-  //     this.prisma.signup,
-  //     {
-  //       where: {
-  //         status: dto.status,
-  //       },
-  //       orderBy,
-  //     },
-  //     {
-  //       page: dto.page,
-  //       perPage: dto.perPage,
-  //     },
-  //   );
-  // }
-
-  async list() {
-    return this.prisma.user.findMany({
-      where: { deletedAt: null },
-    });
+  async list(dto: UserListDto): Promise<PaginatorTypes.PaginatedResult<User>> {
+    const orderBy: Record<string, 'asc' | 'desc'> = {};
+    orderBy[dto.sort] = dto.order;
+    return paginate(
+      this.prisma.user,
+      {
+        where: {
+          deletedAt: null,
+        },
+        orderBy,
+      },
+      {
+        page: dto.page,
+        perPage: dto.perPage,
+      },
+    );
   }
 
   getById(userId: number) {

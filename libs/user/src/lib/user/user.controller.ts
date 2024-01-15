@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
@@ -17,6 +18,7 @@ import { JwtGuard } from '../auth/guard';
 import { CUI } from '../auth/interfaces/current-user.interface';
 import { ACTIONS, APP, SUBJECTS } from '../constants';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { UserListDto } from './dto/users-list.dto';
 import { UserService } from './user.service';
 
 @Controller('users')
@@ -28,8 +30,8 @@ export class UserController {
 
   @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.USER })
   @Get('')
-  list() {
-    return this.userService.list();
+  list(@Query() dto: UserListDto) {
+    return this.userService.list(dto);
   }
 
   @Post('')

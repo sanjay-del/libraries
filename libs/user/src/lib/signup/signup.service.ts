@@ -11,7 +11,7 @@ import { SignupPhoneDto } from './dto/signup-phone.dto';
 import { SignupWalletDto } from './dto/signup-wallet.dto';
 import { SignupConfig } from './interfaces/signup-config.interfaces';
 
-const paginate: PaginatorTypes.PaginateFunction = paginator({ perPage: 10 });
+const paginate: PaginatorTypes.PaginateFunction = paginator({ perPage: 20 });
 
 @Injectable()
 export class SignupService {
