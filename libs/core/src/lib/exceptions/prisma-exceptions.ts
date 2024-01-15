@@ -15,7 +15,13 @@ export const PrimsaFriendlyErrorMessage = (
   let httpCode = 500;
 
   if (exception.code === 'P2002') {
-    const field = (<[]>exception.meta.target).join('.');
+    let field = 'Unknown';
+    if (
+      exception.meta !== undefined &&
+      exception.meta['target'] !== undefined
+    ) {
+      field = (<[]>exception.meta['target']).join('.');
+    }
     message = `Duplicate entry in [${field}] is not allowed.`;
   } else if (exception.code === 'P2025') {
     httpCode = 404;

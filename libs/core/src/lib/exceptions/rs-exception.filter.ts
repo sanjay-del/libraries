@@ -41,7 +41,7 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
 
   private getErrorMessage(errors: any): Record<string, any> {
     const result: Record<string, any> = {};
-    errors.forEach((error) => {
+    errors.forEach((error: any) => {
       const constraints = error.constraints;
       if (constraints) {
         const property = error.property;
@@ -54,7 +54,7 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
-    let exceptionResponse;
+    let exceptionResponse: any;
 
     const responseData: {
       success: boolean;
@@ -106,6 +106,7 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
       responseData.name = exception.name;
       responseData.type = exception.type;
       //console.log('RS Exception occured', responseData);
+      // eslint-disable-next-line no-unsafe-optional-chaining
     } else if (exception instanceof Prisma?.PrismaClientKnownRequestError) {
       responseData.name = exception.code;
       //responseData.meta = exception.meta;
