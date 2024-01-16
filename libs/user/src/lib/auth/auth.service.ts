@@ -7,7 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import { Service, User } from '@prisma/client';
-import { ERRORS } from '@rumsan/core';
+import { RSERRORS } from '@rumsan/core';
 import { PrismaService } from '@rumsan/prisma';
 import { ethers } from 'ethers';
 import { getSecret } from '../../utils/configUtils';
@@ -114,7 +114,6 @@ export class AuthService {
   }
 
   getChallengeForWallet(dto: ChallengeDto, requestInfo: RequestInfo) {
-    throw ERRORS.NOT_JSON;
     return createChallenge(getSecret(), {
       clientId: dto.clientId,
       ip: requestInfo.ip,
@@ -127,8 +126,7 @@ export class AuthService {
       dto.challenge,
       CONSTANTS.CLIENT_TOKEN_LIFETIME,
     );
-    if (requestInfo.ip !== challengeData.ip)
-      throw new ForbiddenException('IP did not match!');
+    if (requestInfo.ip !== challengeData.ip) throw RSERRORS.NO_MATCH_IP;
 
     const messageHash = ethers?.hashMessage(ethers?.toUtf8Bytes(dto.challenge));
     const walletAddress = ethers?.recoverAddress(messageHash, dto.signature);

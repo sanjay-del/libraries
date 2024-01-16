@@ -12,7 +12,7 @@ import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { PrimsaFriendlyErrorMessage } from './prisma-exceptions';
-import { RSError } from './rs-error';
+import { RSError } from './rs-errors';
 
 @Catch()
 export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
@@ -26,7 +26,7 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
     if (errors.length > 0) {
       const messages = this.getErrorMessage(errors);
       throw new BadRequestException({
-        message: 'Validation failed',
+        message: 'Validation failed.',
         errors: messages,
         status: 400,
       });
@@ -59,7 +59,7 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
     const responseData: {
       success: boolean;
       name: string;
-      message: string;
+      message: string | string[];
       statusCode: HttpStatus;
       type: string;
       meta: any;
@@ -71,7 +71,7 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
         'Our server is not happy. It threw an error. Please try again or contact support.' ||
         '',
       statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-      type: '',
+      type: 'ERROR',
       meta: null,
       timestamp: new Date().getTime(),
     };
@@ -89,8 +89,8 @@ export class RsExceptionFilter implements PipeTransform<any>, ExceptionFilter {
         responseData.meta = [response?.errors ?? ''];
       }
       responseData.name = exception.name;
-      responseData.statusCode = exception.getStatus();
-      responseData.message = exception.message;
+      responseData.statusCode = exceptionResponse.statusCode;
+      responseData.message = exceptionResponse.message;
       responseData.type = 'HTTP';
       //console.log('HttpException occured', responseData);
     } else if (exception instanceof RSError) {

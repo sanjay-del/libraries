@@ -1,5 +1,7 @@
 export * from './lib/ability/ability.decorator';
 export * from './lib/ability/ability.guard';
+export * from './lib/ability/ability.module';
+export * from './lib/ability/ability.subjects';
 export * from './lib/auth/auth.module';
 export * from './lib/auth/guard';
 export * as RUMSAN_USER_CONSTANTS from './lib/constants';
