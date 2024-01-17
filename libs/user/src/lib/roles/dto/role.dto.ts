@@ -1,10 +1,20 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from 'class-validator';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { StringUtils } from '@rumsan/core';
+import { Transform } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateRoleDto {
   @ApiProperty({
-    example: 'Admin/Manger/User',
+    example: 'Manager',
   })
+  @ValidateIf((o, v) => StringUtils.isValidString(v))
+  @Transform(({ value }) => value.trim())
   @IsNotEmpty()
   name: string;
 
@@ -15,19 +25,7 @@ export class CreateRoleDto {
   isSystem?: boolean;
 }
 
-export class EditRoleDto {
-  @ApiProperty({
-    example: 'Admin/Manger/User',
-  })
-  @IsNotEmpty()
-  name: string;
-
-  @ApiProperty({
-    example: false,
-  })
-  @IsOptional()
-  isSystem?: boolean;
-}
+export class EditRoleDto extends PartialType(CreateRoleDto) {}
 
 export class CreatePermissionDto {
   @ApiProperty({

@@ -14,10 +14,10 @@ export class RSError extends Error {
   }
 }
 
-export const RSERRORS: any = {
+export const ERRORS: any = {
   register: (errors: { [key: string]: RSError }) => {
     Object.keys(errors).forEach((key) => {
-      RSERRORS[key] = errors[key];
+      ERRORS[key] = errors[key];
     });
   },
   list: () => {
@@ -29,13 +29,13 @@ export const RSERRORS: any = {
         httpCode: number;
       };
     } = {};
-    Object.keys(RSERRORS).forEach((key) => {
-      if (typeof RSERRORS[key] === 'function') return;
+    Object.keys(ERRORS).forEach((key) => {
+      if (typeof ERRORS[key] === 'function') return;
       result[key] = {
-        name: RSERRORS[key].name,
-        message: RSERRORS[key].message,
-        type: RSERRORS[key].type,
-        httpCode: RSERRORS[key].httpCode,
+        name: ERRORS[key].name,
+        message: ERRORS[key].message,
+        type: ERRORS[key].type,
+        httpCode: ERRORS[key].httpCode,
       };
     });
     return result;

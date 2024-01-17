@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { decrypt, encrypt } from './cryptoUtils';
-import { getUnixTimestamp } from './dateUtils';
+import { getUnixTimestamp } from './date.utils';
+import { CryptoUtils } from './index';
 
 export interface ChallengeInput {
   address?: string;
@@ -41,7 +41,7 @@ export function createChallenge(secret: string, data: ChallengeInput) {
   return {
     clientId: payload.clientId,
     ip: data.ip,
-    challenge: encrypt(JSON.stringify(payloadArray), secret),
+    challenge: CryptoUtils.encrypt(JSON.stringify(payloadArray), secret),
   };
 }
 
@@ -53,7 +53,7 @@ export function decryptChallenge(
   if (!secret) throw new Error(ERRORS.NO_SECRET);
 
   const [clientId, timestamp, ip, address] = JSON.parse(
-    decrypt(challenge, secret),
+    CryptoUtils.decrypt(challenge, secret),
   );
   const payload: ChallengePayload = {
     clientId,

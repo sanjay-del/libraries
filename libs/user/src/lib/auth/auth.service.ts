@@ -7,11 +7,10 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { JwtService } from '@nestjs/jwt';
 import { Service, User } from '@prisma/client';
-import { RSERRORS } from '@rumsan/core';
+import { ERRORS, WalletUtils } from '@rumsan/core';
 import { PrismaService } from '@rumsan/prisma';
 import { ethers } from 'ethers';
 import { getSecret } from '../../utils/configUtils';
-import { createChallenge, decryptChallenge } from '../../utils/walletUtils';
 import { EVENTS } from '../constants';
 import { ChallengeDto, OtpDto, OtpLoginDto, WalletLoginDto } from './dto';
 import { TokenDataInterface } from './interfaces/auth.interface';
@@ -67,7 +66,7 @@ export class AuthService {
       name: user?.name,
       otp,
     });
-    return createChallenge(getSecret(), {
+    return WalletUtils.createChallenge(getSecret(), {
       address: dto.address,
       clientId: dto.clientId,
       ip: requestInfo.ip,
@@ -76,7 +75,7 @@ export class AuthService {
 
   async loginByOtp(dto: OtpLoginDto, requestInfo: RequestInfo) {
     const { challenge, otp } = dto;
-    const challengeData = decryptChallenge(
+    const challengeData = WalletUtils.decryptChallenge(
       getSecret(),
       challenge,
       CONSTANTS.CLIENT_TOKEN_LIFETIME,
@@ -114,19 +113,19 @@ export class AuthService {
   }
 
   getChallengeForWallet(dto: ChallengeDto, requestInfo: RequestInfo) {
-    return createChallenge(getSecret(), {
+    return WalletUtils.createChallenge(getSecret(), {
       clientId: dto.clientId,
       ip: requestInfo.ip,
     });
   }
 
   async loginByWallet(dto: WalletLoginDto, requestInfo: RequestInfo) {
-    const challengeData = decryptChallenge(
+    const challengeData = WalletUtils.decryptChallenge(
       getSecret(),
       dto.challenge,
       CONSTANTS.CLIENT_TOKEN_LIFETIME,
     );
-    if (requestInfo.ip !== challengeData.ip) throw RSERRORS.NO_MATCH_IP;
+    if (requestInfo.ip !== challengeData.ip) throw ERRORS.NO_MATCH_IP;
 
     const messageHash = ethers?.hashMessage(ethers?.toUtf8Bytes(dto.challenge));
     const walletAddress = ethers?.recoverAddress(messageHash, dto.signature);

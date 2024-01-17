@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Patch,
   Post,
@@ -12,15 +10,10 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CheckAbilities } from '../ability/ability.decorator';
-import { AbilitiesGuard } from '../ability/ability.guard';
+import { AbilitiesGuard, SkipAbilitiesGuard } from '../ability/ability.guard';
 import { JwtGuard } from '../auth/guard';
 import { ACTIONS, APP, SUBJECTS } from '../constants';
-import {
-  CreatePermissionDto,
-  CreateRoleDto,
-  EditRoleDto,
-  UpdatePermissionDto,
-} from './dto';
+import { CreateRoleDto, EditRoleDto } from './dto';
 import { RolesService } from './roles.service';
 
 @Controller('roles')
@@ -30,76 +23,47 @@ import { RolesService } from './roles.service';
 export class RolesController {
   constructor(private roleService: RolesService) {}
 
-  @HttpCode(HttpStatus.OK)
   @CheckAbilities({ action: ACTIONS.CREATE, subject: SUBJECTS.ROLE })
   @Post()
   createRole(@Body() dto: CreateRoleDto) {
-    return this.roleService.createRole(dto);
+    return this.roleService.create(dto);
   }
 
-  @HttpCode(HttpStatus.OK)
+  //@CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.PERMISSION })
+  @SkipAbilitiesGuard()
+  @Get('permissions')
+  listPermissions() {
+    console.log('ssss');
+    return this.roleService.listPermissions();
+  }
+
   @CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.ROLE })
   @Patch(':id')
   editUser(@Param('id') id: number, @Body() dto: EditRoleDto) {
-    return this.roleService.updateRole(+id, dto);
+    return this.roleService.update(+id, dto);
   }
 
-  @HttpCode(HttpStatus.OK)
   @CheckAbilities({ action: ACTIONS.DELETE, subject: SUBJECTS.ROLE })
   @Delete(':id')
   deleteRole(@Param('id') id: number) {
-    return this.roleService.deleteRole(+id);
+    return this.roleService.delete(+id);
   }
 
   @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.ROLE })
   @Get()
   listRoles() {
-    return this.roleService.listRoles();
+    return this.roleService.list();
   }
 
-  @HttpCode(HttpStatus.OK)
   @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.ROLE })
   @Get(':roleId')
   getRole(@Param('roleId') roleId: number) {
-    return this.roleService.getRoleById(roleId);
+    return this.roleService.getById(roleId);
   }
 
-  // ============Permission Routes=======
-  @HttpCode(HttpStatus.OK)
-  @CheckAbilities({ action: ACTIONS.CREATE, subject: SUBJECTS.PERMISSION })
-  @Post('perms')
-  createPermission(@Body() dto: CreatePermissionDto) {
-    return this.roleService.createPermission(dto);
-  }
-
-  @HttpCode(HttpStatus.OK)
   @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.PERMISSION })
-  @Get('perms')
-  listPermissions() {
-    return this.roleService.listPermissions();
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @CheckAbilities({ action: ACTIONS.READ, subject: SUBJECTS.PERMISSION })
-  @Get(':roleId/perms')
+  @Get(':roleId/permissions')
   listPermsByRole(@Param('roleId') roleId: number) {
     return this.roleService.listPermissionsByRole(+roleId);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @CheckAbilities({ action: ACTIONS.UPDATE, subject: SUBJECTS.PERMISSION })
-  @Patch(':permId/perms')
-  updatePermission(
-    @Param('permId') permId: number,
-    @Body() dto: UpdatePermissionDto,
-  ) {
-    return this.roleService.updatePermission(+permId, dto);
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @CheckAbilities({ action: ACTIONS.DELETE, subject: SUBJECTS.PERMISSION })
-  @Delete(':permId/perms')
-  deletePermission(@Param('permId') permId: number) {
-    return this.roleService.deletePermission(+permId);
   }
 }

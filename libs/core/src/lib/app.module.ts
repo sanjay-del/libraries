@@ -1,11 +1,11 @@
 import { DynamicModule, Global, Module } from '@nestjs/common';
 import { RumsanAppController } from './app.controller';
-import { RSERRORS, RSError } from './exceptions';
+import { ERRORS, RSError } from './exceptions';
 
 type ControllerFunction = () => any;
 
 export const ConstantControllers: { [key: string]: ControllerFunction } = {
-  errors: RSERRORS.list,
+  errors: ERRORS.list,
 };
 
 export const getConstantController = (name: string) => {

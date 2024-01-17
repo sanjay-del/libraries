@@ -48,10 +48,9 @@ enum Gender {
 
 // ===================Role Model==================
 model Role {
-  id       Int       @unique @default(autoincrement())
-  name     String    @unique @db.VarChar()
-  isSystem Boolean   @default(false)
-  expiry   DateTime?
+  id       Int     @unique @default(autoincrement())
+  name     String  @unique @db.VarChar()
+  isSystem Boolean @default(false)
 
   Permission Permission[]
   UserRole   UserRole[]

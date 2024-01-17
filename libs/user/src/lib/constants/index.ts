@@ -1,4 +1,5 @@
-import { RSError } from '@rumsan/core';
+export * from './errors';
+export * from './events';
 
 // For Ability Guard
 export const ACTIONS = {
@@ -17,14 +18,6 @@ export const SUBJECTS: any = {
   PERMISSION: 'rsu.permission',
 };
 
-export const EVENTS = {
-  OTP_CREATED: 'rsu.otp_created',
-};
-
 export const APP = {
   JWT_BEARER: 'JWT',
-};
-
-export const RSERRORS_USER = {
-  RSUSER_TEST: new RSError('cool', 'RSUSER_TEST', 403),
 };

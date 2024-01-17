@@ -4,7 +4,7 @@ export * from './lib/ability/ability.module';
 export * from './lib/ability/ability.subjects';
 export * from './lib/auth/auth.module';
 export * from './lib/auth/guard';
-export * as RUMSAN_USER_CONSTANTS from './lib/constants';
+export * as CONSTANTS_RSUSER from './lib/constants';
 export * from './lib/rumsan-user.module';
 export * from './lib/signup/signup.module';
 export * from './lib/user/user.service';

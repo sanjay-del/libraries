@@ -1,4 +1,4 @@
-interface NameComponents {
+export interface NameComponents {
   salutation: string;
   first: string;
   middle: string;

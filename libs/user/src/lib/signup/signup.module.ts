@@ -11,7 +11,7 @@ import { SignupService } from './signup.service';
   exports: [SignupService],
 })
 export class SignupModule {
-  static register(options: SignupConfig): DynamicModule {
+  static forRoot(options: SignupConfig): DynamicModule {
     return {
       module: SignupModule,
 
