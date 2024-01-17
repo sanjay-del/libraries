@@ -1,6 +1,19 @@
 {
   "name": "@rumsan/user",
   "version": "0.0.1",
+  "description": "Rumsan user management library",
+  "author": "rumsan.com",
+  "license": "AGPL-3.0",
+  "licenses": [
+    {
+      "type": "AGPL-3.0",
+      "url": "https://opensource.org/licenses/AGPL-3.0"
+    },
+    {
+      "type": "Commercial License",
+      "url": "https://www.rumsan.com.com"
+    }
+  ],
   "dependencies": {
     "tslib": "^2.3.0"
   },

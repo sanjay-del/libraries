@@ -43,13 +43,13 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('swagger', app, document);
 
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
   );
-  Logger.log(`Swagger UI: http://localhost:${port}/api/docs`);
+  Logger.log(`Swagger UI: http://localhost:${port}/swagger`);
 }
 
 bootstrap();

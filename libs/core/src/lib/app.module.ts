@@ -10,11 +10,15 @@ export const ConstantControllers: { [key: string]: ControllerFunction } = {
 
 export const getConstantController = (name: string) => {
   name = name.toLowerCase();
-  if (ConstantControllers[name] === undefined)
+  const registeredControllers = Object.keys(ConstantControllers);
+  if (!registeredControllers.includes(name)) {
     throw new RSError(
-      `Constant controller named [${name}] has not been registered.`,
+      `Constant controller named [${name}] has not been registered. Allowed values are [${registeredControllers.join(
+        ',',
+      )}].`,
       'RS_CORE:NO_CONSTANT_CONTROLLER',
     );
+  }
   return ConstantControllers[name]();
 };
 
