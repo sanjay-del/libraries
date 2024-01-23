@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"  # RabbitMQ default port
+      - "15672:15672"  # RabbitMQ management plugin port
+    environment:
+      RABBITMQ_DEFAULT_USER: "test"  # Replace with your desired username
+      RABBITMQ_DEFAULT_PASS: "test"  # Replace with your desired password
+    volumes:
+      - "rabbitmq_data:/var/lib/rabbitmq"  # Persist RabbitMQ data
+
+volumes:
+  rabbitmq_data:
+    driver: local

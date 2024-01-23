@@ -1,0 +1,53 @@
+{
+  "name": "sample-producer",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/sample-producer/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/sample-producer",
+        "main": "apps/sample-producer/src/main.ts",
+        "tsConfig": "apps/sample-producer/tsconfig.app.json",
+        "assets": ["apps/sample-producer/src/assets"],
+        "webpackConfig": "apps/sample-producer/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "sample-producer:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "sample-producer:build:development"
+        },
+        "production": {
+          "buildTarget": "sample-producer:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/sample-producer/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}
